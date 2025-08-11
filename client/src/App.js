@@ -12,10 +12,13 @@ import { useDispatch } from 'react-redux';
 import { useEffect } from 'react';
 import { current } from './JS/Actions/user';
 import Addcourse from './Pages/AddCourse/Addcourse';
-import EditCourse from './Pages/Home/EditCourse/EditCourse';
+import EditCourse from './Pages/EditCourse/EditCourse';
 import LessonList from './Components/LessonList/LessonList';
 import AddLesson from './Pages/AddLesson/AddLesson';
 import EditLesson from './Pages/EditLesson/EditLesson';
+import LessonDetails from './Pages/LessonDetails/LessonDetails';
+import EditProfile from './Pages/EditProfile/EditProfile';
+
 
 function App() {
   const dispatch=useDispatch();
@@ -29,19 +32,25 @@ useEffect(()=>{
     <div className="App">
       <NavBar />
       <h1>Plateforme d'apprentissage en ligne</h1>
-       <Routes>
-        <Route path='/' element={<Home />}></Route>
-        <Route path='/register' element={<Register />}></Route>
-        <Route path='/login' element={<Login />}></Route>
-        <Route path='/profile' element={<Profile />}></Route>
-        <Route path='/cours' element={<Cours />}></Route>
-        <Route path='/add-course' element={<Addcourse />}></Route>
-        <Route path='/edit/:id' element={<EditCourse/>}></Route>
-        <Route path="/lesson/:courseId" element={<LessonList />} />
-        <Route path="/add-lesson/:courseId" element={<AddLesson />} />
-        <Route path="/edit-lesson/:lessonId" element={<EditLesson />} />
-        <Route path='/*' element={<Error />}></Route>
-      </Routes>
+      <Routes>
+  <Route path='/' element={<Home />} />
+  <Route path='/register' element={<Register />} />
+  <Route path='/login' element={<Login />} />
+  <Route path='/profile' element={<Profile />} />
+  <Route path="/edit-profile/:id" element={<EditProfile />} />
+
+  <Route path='/cours' element={<Cours />} />
+  <Route path='/add-course' element={<Addcourse />} />
+  <Route path='/edit/:id' element={<EditCourse />} />
+
+  <Route path="/course/:courseId/lessons" element={<LessonList />} />
+<Route path="/add-lesson/:courseId" element={<AddLesson />} />
+<Route path="/edit-lesson/:lessonId" element={<EditLesson />} />
+<Route path="/lesson/:id" element={<LessonDetails />} />
+
+  <Route path='/*' element={<Error />} />
+</Routes>
+
     </div>
   );
 }

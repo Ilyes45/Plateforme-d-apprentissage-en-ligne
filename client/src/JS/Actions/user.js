@@ -49,3 +49,35 @@ export const current =() => async(dispatch)=>{
         
     };
 };
+
+export const editUser = (id, updatedUser) => async (dispatch) => {
+  try {
+    const config = {
+      headers: {
+        authorization: localStorage.getItem("token"), // juste le token sans "Bearer "
+        "Content-Type": "multipart/form-data",
+      },
+    };
+    await axios.put(`/api/user/${id}`, updatedUser, config);
+    dispatch(current()); // recharge user à jour
+  } catch (error) {
+    console.error("Edit User Error:", error.response?.data || error.message);
+    dispatch({ type: FAIL_USER, payload: error.response });
+  }
+};
+
+
+export const getUser = (id) => async (dispatch) => {
+  dispatch({ type: LOAD_USER });
+  try {
+    const config = {
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    };
+    const result = await axios.get(`/api/user/${id}`, config);
+    dispatch({ type: CURRENT_USER, payload: result.data });
+  } catch (error) {
+    dispatch({ type: FAIL_USER, payload: error.response });
+  }
+};

@@ -7,6 +7,7 @@ import { deleteCourse } from '../../JS/Actions/course';
 const CourseCard = ({ course }) => {
     const dispatch = useDispatch();
     const navigate= useNavigate();
+    
     const user = useSelector((state) => state.userReducer.user);
   return (
     <div>
@@ -16,8 +17,11 @@ const CourseCard = ({ course }) => {
         <Card.Text>{course.description} </Card.Text>
         <Card.Text>{course.category} </Card.Text>
         <div className="d-flex gap-2">
-          
-  <Button variant="primary" onClick={() => navigate(`/lesson/${course._id}`)}>Voir Lesson</Button>
+
+  <Button variant="primary" onClick={() => navigate(`/course/${course._id}/lessons`)}>
+  Voir Lesson
+</Button> 
+
 
   {user && user._id === course.createdBy && (
     <>

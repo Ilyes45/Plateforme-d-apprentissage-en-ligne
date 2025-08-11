@@ -10,6 +10,7 @@ export const getLessons = (courseId) => async (dispatch) => {
     if (courseId) {
       url += `?courseId=${courseId}`;
     }
+    console.log("Fetching lessons for courseId:", courseId);
     let result = await axios.get(url);
     dispatch({ type: SUCC_LESSON, payload: { listLessons: result.data.lessons } });
   } catch (error) {
@@ -26,7 +27,7 @@ export const addLesson = (newLesson) => async (dispatch) =>{
             },
         };
         await axios.post("/api/lesson/addlesson",newLesson,config);
-        dispatch(getLessons());
+         dispatch(getLessons(newLesson.courseId)); 
     } catch (error) {
         dispatch({type : FAIL_LESSON, payload: error.response?.data?.message || error.message});
     }
@@ -73,7 +74,6 @@ export const getLesson = (id) => async (dispatch) => {
     dispatch({type: LOAD_LESSON});
     try {
         let result = await axios.get(`/api/lesson/${id}`);
-        console.log("GET LESSON SUCCESS", result.data);
         dispatch({ type: GET_LESSON , payload: { lessonToGet: result.data.lessonToGet } });
     } catch (error) {
         console.error("GET LESSON ERROR", error.response?.data || error.message);

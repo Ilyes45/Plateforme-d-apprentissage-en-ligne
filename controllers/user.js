@@ -72,3 +72,62 @@ exports.login = async (req, res) => {
     }
 }
    
+exports.updateUser = async (req, res) => {
+    try {
+        // Vérifier que l'utilisateur connecté modifie bien son propre profil
+        if (req.user.id !== req.params.id) {
+            return res.status(403).json({ message: "You are not authorized to update this user." });
+        }
+
+        const { id } = req.params; // id de l'utilisateur à modifier
+        const { name, email, phone, password } = req.body;
+
+        // Chercher l'utilisateur
+        const user = await User.findById(id);
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        // Upload image si nouvelle image fournie
+        if (req.file) {
+            // supprimer ancienne image si elle existe
+            if (user.cloudinary_id) {
+                await cloudinary.uploader.destroy(user.cloudinary_id);
+            }
+            const cloudinaryResult = await cloudinary.uploader.upload(req.file.path);
+            user.image = cloudinaryResult.secure_url;
+            user.cloudinary_id = cloudinaryResult.public_id;
+        }
+
+        // Mise à jour des champs
+        if (name) user.name = name;
+        if (email) user.email = email;
+        if (phone) user.phone = phone;
+
+        // Si mot de passe fourni, le hacher
+        if (password && password.trim() !== "") {
+            const saltRounds = 10;
+            user.password = await bcrypt.hash(password, saltRounds);
+        }
+
+        // Sauvegarde
+        await user.save();
+
+        res.status(200).json({ message: "User updated successfully", user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Can't update user" });
+    }
+};
+
+exports.getUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id).select('-password'); // ne pas renvoyer le mdp
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error' });
+  }
+};

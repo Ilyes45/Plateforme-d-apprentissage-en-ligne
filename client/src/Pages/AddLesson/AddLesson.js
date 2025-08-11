@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useParams, useNavigate } from 'react-router-dom';
 import { addLesson } from '../../JS/Actions/lesson';
+import { Button } from 'react-bootstrap';
 
 const AddLesson = () => {
   const { courseId } = useParams();
@@ -19,13 +20,18 @@ const AddLesson = () => {
     setLessonData({ ...lessonData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    dispatch(addLesson(lessonData));
-    navigate(`/lesson/${courseId}`);
-  };
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    await dispatch(addLesson(lessonData));  // attends que l’ajout soit fait
+    navigate(`/course/${courseId}/lessons`); // navigation vers la liste des leçons du cours
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de la leçon:", error);
+  }
+};
 
   return (
+    <div>
     <form onSubmit={handleSubmit}>
       <input
         type="text"
@@ -49,9 +55,14 @@ const AddLesson = () => {
         value={lessonData.videoUrl}
         onChange={handleChange}
       />
-      <button type="submit" onClick={handleSubmit}>Ajouter la leçon</button>
+      <Button type="submit" onClick={handleSubmit}>Ajouter la leçon</Button>
     </form>
+     <Button variant="primary" onClick={() => navigate('/cours')}>
+      Retour aux cours
+    </Button>
+    </div>
   );
+  
 };
 
 export default AddLesson;

@@ -1,10 +1,12 @@
 import React from 'react';
-import { Card, ListGroup } from 'react-bootstrap';
+import { Button, Card, ListGroup } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import './Profile.css';
 
 const Profile = () => {
   const user = useSelector((state) => state.userReducer.user);
+  const navigate = useNavigate();
 
   return (
     <div className='profile'>
@@ -20,6 +22,10 @@ const Profile = () => {
           <ListGroup.Item>{user?.email}</ListGroup.Item>
           <ListGroup.Item>{user?.phone}</ListGroup.Item>
         </ListGroup>
+        {/* Passe bien l'id dans l'URL */}
+        <Button variant="primary" onClick={() => navigate(`/edit-profile/${user._id}`)}>
+          Edit Profile
+        </Button>
       </Card>
     </div>
   );

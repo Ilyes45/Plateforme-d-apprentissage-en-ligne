@@ -1,38 +1,58 @@
 import { Button, Card } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { deleteLesson } from "../../JS/Actions/lesson";
 
-const LessonCard = ({ lesson, course, user }) => {
+const LessonCard = ({ lesson, course , listLessons }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  console.log("LessonCard Props:", { lesson, course, user });
 
-  // Pour éviter erreur si course non défini encore
-   const createdById = typeof course?.createdBy === 'string' ? course.createdBy : course?.createdBy?._id;
-const isOwner = user?._id === createdById;
+  // Récupération de l'utilisateur connecté depuis Redux
+  const user = useSelector((state) => state.userReducer.user);
 
+  // L'utilisateur est propriétaire s'il est admin OU s'il a créé le cours
+  const isOwner =
+    user &&
+    (user.role === "admin" || course?.createdBy?.toString() === user._id);
 
+  console.log("User dans LessonCard :", user);
+  console.log("Course dans LessonCard :", course);
+  console.log("isOwner :", isOwner);
+console.log("User:", user);
+console.log("Role:", user?.role);
   return (
-    <div>
-      <Card style={{ width: '18rem' }}>
-        <Card.Body>
-          <Card.Title>{lesson.title}</Card.Title>
-          <Card.Text>{lesson.content.substring(0, 100)}...</Card.Text>
-          <Button variant="primary" onClick={() => navigate(`/lesson/${lesson._id}`)}>
-            Voir la leçon
-          </Button>
-          {isOwner && (
-  <>
-    <Button variant="primary" onClick={() => dispatch(deleteLesson(lesson._id))}>Delete Lesson</Button>
-    <Button variant="primary" onClick={() => navigate(`/edit-lesson/${lesson._id}`)}>Edit Lesson</Button>
+    <Card style={{ width: "18rem" }}>
+      <Card.Body>
+        <Card.Title>{lesson.title}</Card.Title>
 
-  </>
-)}
+        {/* Bouton pour voir la leçon */}
+        <Button
+  variant="primary"
+  onClick={() => navigate(`/lesson/${lesson._id}`, { state: { courseId: course._id, lessons: listLessons } })}
+>
+  Voir Lesson
+</Button>
 
-        </Card.Body>
-      </Card>
-    </div>
+
+        {/* Boutons d'édition uniquement si admin ou créateur */}
+        {isOwner && (
+          <>
+            <Button
+              variant="danger"
+              onClick={() => dispatch(deleteLesson(lesson._id))}
+            >
+              Delete Lesson
+            </Button>
+            <Button
+              variant="warning"
+              onClick={() => navigate(`/edit-lesson/${lesson._id}`)}
+            >
+              Edit Lesson
+            </Button>
+          </>
+        )}
+      </Card.Body>
+    </Card>
   );
 };
 

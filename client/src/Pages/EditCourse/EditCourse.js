@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { useMatch, useNavigate } from 'react-router-dom';
-import { editCourse, getCourse } from '../../../JS/Actions/course';
+import { editCourse, getCourse } from '../../JS/Actions/course';
 import { Button, Form } from 'react-bootstrap';
 
 const EditCourse = () => {
@@ -77,6 +77,9 @@ const EditCourse = () => {
         <Button variant="primary" type="button" onClick={handleEdit}>
           Edit
         </Button>
+        <Button variant="secondary" onClick={() => navigate(-1)}>
+                Annuler
+              </Button>
       </Form>
     </div>
   );
